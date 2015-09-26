@@ -1,0 +1,56 @@
+
+On September 26, 2015.
+
+0.
+$ git version
+git version 1.9.1
+
+
+1. Click "Create new" ( on top of right side of my existing github page ... )
+   Did with option "Readme..."
+
+2. https://github.com/settings/ssh
+   click "add new key" and 
+   paste contents of this
+        /home/stan/.ssh/id_rsa.pub
+   into key text box
+
+3. in empty dir, 
+   git clone git@github.com:lancelab/plaxbone.git
+
+4. 
+git add -A
+
+5.
+
+git config user.email "you@example.com"
+git config user.name "Your Name"
+
+git commit -a -m "version 11"
+
+#to check does .gitignore leaks any private info:
+git ls-tree -r master --name-only
+#http://superuser.com/questions/429693/git-list-all-files-currently-under-source-control
+
+6.
+git push origin master
+
+
+
+////////////////// problems solved:
+5. 
+stan@boss:/var/www/html/w/plaxbone-v11$ git commit -a -m "version 11"
+
+*** Please tell me who you are.
+
+Run
+
+  git config --global user.email "you@example.com"
+  git config --global user.name "Your Name"
+
+to set your account's default identity.
+Omit --global to set the identity only in this repository.
+
+fatal: unable to auto-detect email address (got 'stan@boss.(none)')
+stan@boss:/var/www/html/w/plaxbone-v11$ 
+

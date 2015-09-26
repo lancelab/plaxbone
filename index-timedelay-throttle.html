@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Simple Parallax App</title>
+    	<meta charset="utf-8">
+        <meta name="viewport"                   content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    	<!-- meta name="viewport"		        content="width=device-width" -->
+        <link   href="app/css/app.css"          rel="stylesheet">
+        <script src="vendor/jquery-1.11.3.js"></script>
+    	<script src="vendor/btb/debug.js"></script>
+    	<script src="vendor/btb/core.js"></script>
+        <script src="app/js/events.js"></script>
+        <script src="app/js/init.js"></script>
+		<script src="app/js/start.js"></script>
+		<script src="vendor/btb/throttled-animation-frame.js"></script>
+		<script src="vendor/btb/feature-detectors.js"></script>
+
+    </head>
+    <body>
+
+
+        <div data-conf='{ "perspective": 100, "aratio":1.5 }' data-conf-app='{ "antichoking":"timedelay", "antichoking-delay":10 }' >
+            <img data-conf='{ "distance": 100 }'  src="img/buildings.png">
+            <img data-conf='{ "distance": 80 }'   src="img/post.png">
+        </div>
+
+        <div class="static">
+            <h2>Paralite</h2>
+        
+            Minimal variant of paralax framework.<br><br>
+            Concept:<br>
+            <ul>
+                <li>Scroll event based JavaScript code rearranges CSS of frames and frame-children-images.</li>
+                <li>Configurable from HTML.</li>
+                <li>By default, aspect ratio is preserved.</li>
+                <li>No perspective depth implemented.</li>
+                <li>Browser-range: Android 2.3.5+, IE8+?. No CSS3 transworms.</li>
+                <li>Images are spritable.</li>
+            </ul>
+        </div>
+        <div data-conf='{ "perspective": 100, "aratio":0.8, "sizepx":[ 1700, 1125 ] }'>
+            <img data-conf='{ "distance": 100                }'                                                             src="img/flours-DSCI0996.jpg">
+            <img data-conf='{ "distance": 80, "phase0": 0.8, "speed" : [ 1, 1  ],   "boxpx":[ 300, 200, 300, 300 ] }'     src="img/bubble80.png">
+            <!--           
+            <img data-conf='{ "distance": 50, "phase0": 1                            }'                                     src="img/bubblesDSCI0996.png">
+            -->
+            <img data-conf='{ "distance": 50, "phase0": 0.8, "speed" : [ 1.2, 0.3 ], "boxpx":[ 100, 700, 300, 300 ]  }'      src="img/bubble50.png">
+            <img data-conf='{ "distance": 30, "phase0": 1.0, "speed" : [ 1, 0.5 ],  "boxpx":[ 800, 300, 300, 300 ]  }'      src="img/bubble30.png">
+            <img data-conf='{ "distance": 20, "phase0": 0.4, "speed" : [ 1, 0.5 ],  "boxpx":[ 200, 600, 300, 300 ] }'      src="img/bubble20.png">
+        </div>
+
+        <div class="static">
+            <h2>Configuration</h2>
+            <ul>
+                <li>This widget can be configured right from HTML in "data-conf" attribute.</li>
+                <li>perspective is a distance from parent-base layer to an observer,</li>
+                <li>phase0 is an effective phase when scroll-driven phase is 0</li>
+                <li>phase takes value 0 when frame becomes visible and takes value 1 when frame disappears or when there 
+                    is nothing to scroll</li>
+                <li>speed is an additional speed applied to the image</li>
+                <li>boxpx is a starting point at phase = 0</li>
+                <li>src is a Web-path to an image</li>
+            </ul>            
+
+        </div>
+
+    </body>
+</html>
+

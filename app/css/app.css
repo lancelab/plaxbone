@@ -1,0 +1,75 @@
+
+    /*
+        This file makes basic setup for plaxbone plugin
+    */
+
+
+    body
+    {
+        margin              : 0px;
+        padding             : 0px;
+        border              : 0px;
+        background-color    : #113355;
+    }
+
+    .static
+    {
+        position            : relative;
+        margin              : 0px;
+        padding             : 30px;
+        height              : 260px;
+        font-family         : arial, helvetica;
+        font-size           : 16px;
+        color               : #FFFFFF;
+    }
+
+    .static h2
+    {
+        text-align          : center;
+    }    
+
+    .static .short
+    {
+        height              : 150px;
+    }
+
+
+    @media( max-width: 600px )
+    {
+        .static
+        {
+            padding             : 10px;
+            height              : 290px;
+            font-size           : 13px;
+        }
+    }    
+
+    /*
+    this solution is too intrusive    
+    [data-conf]
+    {
+        padding-bottom          : 40px;
+        background-color        : #f00;
+    }
+    */
+
+    /* //\\// non plugin styles. content styles.    *****************************************/
+
+    .annotation
+    {
+        margin              : 0px;
+        padding             : 30px;
+        font-size           : 25px;
+        color               : #fff;
+        font-family         : arial, helvetica;
+        background-color    : transparent;
+    }
+
+    @media( max-width: 600px )
+    {
+        .annotation
+        {
+            font-size           : 13px;
+        }
+    }    
+

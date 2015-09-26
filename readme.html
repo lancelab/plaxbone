@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>PlaxBone Readme</title>
+    	<meta charset="utf-8">
+        <meta name="viewport"                   content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+
+        <style>
+
+            body
+            {
+                background-color    : #ffffff;
+            }
+
+			pre
+			{
+				font-size		: 11px;
+                padding         : 10px;
+			}
+
+			a
+			{
+                padding-left    : 5px;
+                padding-right   : 5px;
+                border-radius   : 4px;
+                background-color    : #cccccc;
+				text-decoration	: none;
+				font-size		: 13px;
+			}
+		
+			a:hover
+			{
+				font-size		: 15px;
+			}		
+		
+			#copyright
+			{
+				font-size		: 9px;
+				font-family		: monospace;
+			}
+		</style>
+
+
+
+    </head>
+    <body>
+
+        <div>
+            <pre>
+
+                <h2>PlaxBone Readme</h2>
+
+                PlaxBone is minimalist parallax plugin.
+
+                Clarification for job interview:
+                All the code except code in vendor folder is written by Konstantin Kirillov.
+                Code in vendor/btb is also fully Konstantin's.
+
+                In case this readme is outdated, look at <a href="http://landkey.net/sand/zz/plaxbone">most recent version.</a>
+
+                <h3>Concept</h3>
+
+                User can scroll web page using any tools: scrollbar, drag, touch-drag.
+
+                Plugin calculates position of the viewport ( plainly browser window ) and detects
+                visibility of paralax-frame { pframe }.
+
+                If pframe is visible, plugin calculates %-phase of visibility and positions child elements of pframe according
+                parallax-scenario.
+            
+                Plugin is configurable through HTML attibutes prefixed with data-config-... prefix.
+
+                Plugin is fully responsive and adjusts width and hight of pframes. However, web-master is responsible in 
+                setting aspect-ratio for pframe.
+                Automation of aspect-ratio is possible, but scheduled in next versions of plugin.
+
+                "Realistic" parallax ( scaling by depth according the distance ) is scheduled in next versions of plugin.
+
+                It is felt that there is a lot of "room" to improve the performance, but perhaps in next versions.
+
+
+                <h3>Demos</h3>
+
+                    <a href="index-default.html">Default options. With translate3d and af-throttler.</a>
+
+                    <a href="testbench/compare.png">See frame timings from Google timelines</a>
+
+                    <a href="index-no-throttling.html">No throttle</a>. Not good for Andr ...
+                    <span id="android" name="android"> </span>
+
+                    Best for Android 2.3.5: timedelay = 10 ms and no AnimationFrame.
+
+                        <a href="index-timedelay-throttle.html">Timedelay throttle</a>.
+
+                        You can see JavaScript debug messages right over mobile screens.
+                        <a href="index-timedelay-throttle.html?deb--ffff0000">Timedelay throttle, debug</a>.
+
+                        This link has video adopted to Android 2.3.5 by converting from another mp4 video.
+                        This video cannot be played on FF.
+                        Fallback to FF is added as a second choice.
+                        <a href="index-video-droid-controls.html">video for Android 2.3.5 with controls</a>.
+
+                        <a href="index-video-droid.html">video for Android 2.3.5 no controls</a>.
+                        
+
+                <h3>Options</h3>
+
+                There are few optional features added to plugin.
+
+                1. animationFrame.
+
+                    It is widely discussed that using request/cancel AnimationFrame improves performance. 
+                    requestAnimationFrame mode is a hard-coded default.
+                    This code is in: vendor/btb/throttled-animation-frame.js
+
+                2. web-master can disable animationFrame and even disable throttling at all.
+
+                    For example, animationFrame fails on "mainstream" Android 2.3.5. The best mode for this Android is
+                    data-conf-app='{ "antichoking":"timedelay", "antichoking-delay":10 }'
+                    See <a href="#android">demo</a>.
+
+                3. Web master can set "parallax-up", left, right by adding "speed" parameter with corresponding negative or positive values.
+                    
+
+
+                All the *.html front pages call the same JavaScript Application.
+                The differences in configuration are only in HTML-script itself. These differences are
+                scripted in attribute data-conf...
+
+                There are two data-conf... attributes.    
+            
+                    data-conf
+                    and
+                    data-conf-app
+
+                For example in file:
+                    index-timedelay-throttle.html
+                
+                default settings are overriden with attributes:
+
+                    data-conf='{ "perspective": 100, "aratio":1.5 }'
+                    and 
+                    data-conf-app='{ "antichoking":"timedelay", "antichoking-delay":10 }' >
+
+
+                <h3><a href="app/js/init.js">Change log</a></h3>
+
+            </pre>
+        </div>
+
+    </body>
+</html>
+
