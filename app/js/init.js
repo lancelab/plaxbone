@@ -1,7 +1,8 @@
 
 //  //\\//  PlaxBone. Parallax widget configurable from HTML-file.
 //          Copyright (c) 2015. Konstantin Kirillov.
-//          License: MIT.
+//          License on everything except images and videos: MIT.
+//          License on images and videos: all rights reserved.
 //
 //          This file is a main entry point into application.
 //
