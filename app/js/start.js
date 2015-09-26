@@ -10,11 +10,11 @@
 ( function ( $ ) {
 
     //: namespaces
-	var btb						= window.btb$			= window.btb$			|| {};		
-	var app						= btb.app				= btb.app				|| {};
-	var conf    				= app.conf				= app.conf				|| {};
-	var events					= app.events			= app.events			|| {};
-	var yjoomla   				= app.yjoomla   		= app.yjoomla			|| {};
+    var btb                     = window.btb$           = window.btb$           || {};        
+    var app                     = btb.app               = btb.app               || {};
+    var conf                    = app.conf              = app.conf              || {};
+    var events                  = app.events            = app.events            || {};
+    var yjoomla                 = app.yjoomla           = app.yjoomla           || {};
 
 
 
@@ -68,8 +68,8 @@
         var wDivConf = $( 'div[data-conf-app]' ) || [];
         $.extend( app.conf, getAttributes( wDivConf[0], 'data-conf-app' ) || {} );
 
-		//.checks if site prefers using different configuration prefix
-		var wDconfPref = app.conf[ 'dconf-pref' ] || 'data-conf';
+        //.checks if site prefers using different configuration prefix
+        var wDconfPref = app.conf[ 'dconf-pref' ] || 'data-conf';
 
         if( btb.browser.mobile ) app.conf[ 'antichoking-delay' ] = app.conf[ 'antichoking-delay' ]  || 10;
 
@@ -177,7 +177,7 @@
                     //      z-index 0 and MOBILE_VIDEO_ZINDEX may be incorrect,
                     if( helWrap.video && btb.browser.mobile ) {
                         $subPF.css( 'z-index', MOBILE_VIDEO_ZINDEX );
-                		subPF.addEventListener( 'playing', function() { 
+                        subPF.addEventListener( 'playing', function() { 
                             $subPF.css( 'z-index', 0 );
                             //.this statement has been tested on Android 2.3.5
                             //btb.ifd eb( 'raised z-index-=' + $subPF.css( 'z-index' ) );
@@ -282,7 +282,7 @@
     app.processHtelPhase = function ()
     {
         //btb.ifdeb( 'app.processHtelPhase starts ... ' );
-    	var wintop = $win.scrollTop(); //window2document(); //?? offset().top;
+        var wintop = $win.scrollTop(); //window2document(); //?? offset().top;
 
         //btb.ifdeb( '  wintop=' + wintop + ', offset().top=' + $win.offset().top + ', body.height=' + $( document.body ).height()  );
         btb.ifdeb( '  wintop=' + wintop + ', winheight=' + winheight + ', summ=' + (winheight + wintop) +', body.height=' + bodyHeight  );

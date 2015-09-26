@@ -6,7 +6,7 @@
 //
 //          This file is a main entry point into application.
 //
-//      version 11. Sept 26, 2015.
+//      version 12. Sept 26, 2015.
 //                  Posted to github.
 //      version 10. Sept 25, 2015. 
 //                  Android 2.3.5 began showing video even yet as showing video separately from HTML-page
@@ -48,16 +48,16 @@
 ( function ( $ ) {
 
     //: namespaces
-	var btb						= window.btb$			= window.btb$			|| {};		
-	var app						= btb.app				= btb.app				|| {};
-	var events					= app.events			= app.events			|| {};
+    var btb                     = window.btb$            = window.btb$            || {};        
+    var app                     = btb.app                = btb.app                || {};
+    var events                  = app.events             = app.events             || {};
 
 
 
 
-	// Main entry point into the application
+    // Main entry point into the application
     // If full page load is required, use this: $( window ).load( function () {
-	$( document ).ready( function () {
+    $( document ).ready( function () {
 
         //d ebug
         btb$.ifdeb ( 'document ready' );

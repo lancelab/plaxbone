@@ -5,27 +5,27 @@
 ( function ( $ ) {
 
     //: namespaces
-	var btb						= window.btb$			= window.btb$			|| {};		
-	var app						= btb.app				= btb.app				|| {};
-    var	conf    				= app.conf				= app.conf				|| {};
-	var events					= app.events			= app.events			|| {};
+    var btb                         = window.btb$           = window.btb$           || {};        
+    var app                         = btb.app               = btb.app               || {};
+    var conf                        = app.conf              = app.conf              || {};
+    var events                      = app.events            = app.events            || {};
 
 
 
     /// Initializes events
-	events.init = function ()
-	{
+    events.init = function ()
+    {
 
         var $win = $( window );
 
 
         //  //\\    scroll smoothing        //////////////////////////////////////////////
         //  seems working well on desktop
-		var effectiveScroll = app.processHtelPhase;
+        var effectiveScroll = app.processHtelPhase;
 
         //: estimates Graphics Processor Power:
-	    var width			= screen.width;
-	    var height			= screen.height;
+        var width           = screen.width;
+        var height          = screen.height;
         var volume          = width * height;
         /// 800 * 500 do match Android 2.3.5, Samsung Galaxy Player YP G1.
         //  if( volume < 800 * 500 ) {  
@@ -44,14 +44,14 @@
 
 
 
-		$win.bind( 'scroll', effectiveScroll );
+        $win.bind( 'scroll', effectiveScroll );
 
         var resize_thr  = btb.throttledCallback( app.onresize, 50 );
-		$win.resize(    resize_thr );
-	};
+        $win.resize(    resize_thr );
+    };
 
 
-}) ( jQuery );	
+}) ( jQuery );    
 
 
 
