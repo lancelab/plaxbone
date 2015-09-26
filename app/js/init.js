@@ -7,7 +7,7 @@
 //          This file is a main entry point into application.
 //
 //      version 12. Sept 26, 2015.
-//                  Posted to github.
+//                  Posted to github. Minor cleanup.
 //      version 10. Sept 25, 2015. 
 //                  Android 2.3.5 began showing video even yet as showing video separately from HTML-page
 //                  and yet with controls and non-scaled to width.
