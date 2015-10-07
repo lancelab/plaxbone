@@ -6,20 +6,29 @@
 //          Setus up positioner, doPositionChildElements,  which work is based on child phase.
 //          Child phase is determined on scroll-bar-position.
 
+//          This file has youjoomla add-on. For its locations search for keyword "app.yjoomla" below.
+//          If yjoomla-adapter.js is not loaded, then this add-on has no effect.
+
 
 ( function ( $ ) {
+
+
 
     //: namespaces
     var btb                     = window.btb$           = window.btb$           || {};        
     var app                     = btb.app               = btb.app               || {};
     var conf                    = app.conf              = app.conf              || {};
     var events                  = app.events            = app.events            || {};
-    var yjoomla                 = app.yjoomla           = app.yjoomla           || {};
 
 
+    conf.PARALLAX_PARENT_CLASS_FLAG     = 'parallax-frame';
 
     //: hard-coded constants
-    var MOBILE_VIDEO_ZINDEX = 111111111;
+    var MOBILE_VIDEO_ZINDEX             = 111111111;
+    var MOBILE_ANTICHOCKING_DELAY       = 10;
+    var DEFAULT_DISTANCE_TO_BASE_LAYER  = 1;    //"perspective"
+    var DEFAULT_SPEED_EXCESS            = [ 0, 0, 0 ];
+    //var DEFAULT_ANTICHOCKING_DELAY    = 1;
 
 
     //:  private variables
@@ -27,14 +36,18 @@
     var bodyHeight;     //document body height
     var topFrames;      //frames to animate in parallax
     var $win;           //jQuery window object
+    var confPref;       //chosen HTML-attr prefix like 'data-conf'
 
 
-    /// gets attr on htmel and runs cb if any ...
+
+
+
+    /// Helper: gets attr on htmel and runs cb if any ...
     /**
      * @param  {string} type request | cancel | native.
      * @return {object} configuration object | configuratoin-string
      */
-    function getAttributes ( htmel, attr, cb, primitive )
+    function getAttributes ( htmel, attr, primitive )
     {
         var econf = null;
         //https://developer.mozilla.org/en-US/docs/Web/Guide/HTML/Using_data_attributes
@@ -49,7 +62,6 @@
                     return eonf;
             }
         }
-        cb && cb( econf, htmel );
         return econf;
     }
 
@@ -61,37 +73,34 @@
     {
         btb.ifdeb( 'app initiates in app.start ... ' );
 
-        topFrames   = [];
-        $win        = $( window );
+        if( app.yjoomla ) {
+            conf.PARALLAX_PARENT_CLASS_FLAG = app.yjoomla.conf.PARALLAX_PARENT_CLASS_FLAG || conf.PARALLAX_PARENT_CLASS_FLAG;
+        }
 
-
+        topFrames    = [];
+        $win         = $( window );
         var wDivConf = $( 'div[data-conf-app]' ) || [];
         $.extend( app.conf, getAttributes( wDivConf[0], 'data-conf-app' ) || {} );
 
         //.checks if site prefers using different configuration prefix
-        var wDconfPref = app.conf[ 'dconf-pref' ] || 'data-conf';
+        confPref = app.conf[ 'dconf-pref' ] || 'data-conf';
 
-        if( btb.browser.mobile ) app.conf[ 'antichoking-delay' ] = app.conf[ 'antichoking-delay' ]  || 10;
+        if( btb.browser.mobile ) app.conf[ 'antichoking-delay' ] = app.conf[ 'antichoking-delay' ]  || MOBILE_ANTICHOCKING_DELAY;
 
-        /////////////////////////////////////////////////////////////////
+
         /// Loops through parallax candidates marked by flag 'data-conf'.
         //  https://learn.jquery.com/using-jquery-core/iterating/
-        /////////////////////////////////////////////////////////////////
         $( 'body > div' ).each( function ( key, framediv ) {
-            
-            if( yjoomla.getAttributes ) {
-                //// attaches custom framework for youjoomla.com
-                //   stub
-                //   yjoomla.getAttributes();
-            } else {
-                getAttributes( framediv, wDconfPref, parseAttributes );
-            }
+            var aconf =  getAttributes( framediv, confPref );
+            parseAttributes( aconf, framediv );
         });
         //.inits events because all dependent application parts are already in place
         events.init ();
         //.draws
         app.onresize ();
     };
+
+
 
 
     /// Helper. Parses and spawns pframe and pframe-children 
@@ -102,13 +111,50 @@
       */
     function parseAttributes ( fconf, framediv )
     {
-                if( !fconf ) return;
+
+                //  //\\    detecting pframe and its children /////////////////////
+
+                //: presense 'data-conf' attribute at children is a flag for parallax frame
+                //  var $children = $( framediv ).children( '[data-conf]' );
+                var $children = $( framediv ).children();
+                if( !$children.length ) return;
+
+                var childrenWithAttribute = [];
+
+                var allChildrenAreParallaxSubframes = false;
+
+                /// presense of specific CSS-class makes framediv a parallax-frame and all children its parallax subframes:
+                var classAttr = framediv.getAttribute && framediv.getAttribute ( 'class' );
+
+                if( classAttr && classAttr.indexOf( conf.PARALLAX_PARENT_CLASS_FLAG ) > -1 ) {
+                    var allChildrenAreParallaxSubframes = true;
+                }
+
+                //c ccc( classAttr + ' allChildrenAreParallaxSubframes=' + allChildrenAreParallaxSubframes + ' conf.PARALLAX_PARENT_CLASS_FLAG=' + conf.PARALLAX_PARENT_CLASS_FLAG );
+                var isParallaxChild = false;
+                var yjoomlaAttr = app.yjoomla && app.yjoomla.attributeExists;
+                $children.each( function( index, child  ) {
+                    var isParallax = allChildrenAreParallaxSubframes || 
+                                     ( yjoomlaAttr && yjoomlaAttr( child ) || ( child.getAttribute && child.getAttribute ( confPref ) ) );
+                    if( isParallax ) {
+                        isParallaxChild = true;
+                        childrenWithAttribute.push( child );
+                    }
+                 });
+                if( !isParallaxChild ) return;
+                //  \\//    detecting pframe and its children /////////////////////
+
+
+
+
+
 
                 /// builds information about parent-frame
                 //  parent-frame comprises subPFrames, images or other parts of 3d scene ...
-                fconf.perspective = fconf.perspective || 1;
-                var fsize   = fconf.sizepx;
-                var $frame  = $( framediv );
+                fconf               = fconf || {};
+                fconf.perspective   = fconf.perspective || DEFAULT_DISTANCE_TO_BASE_LAYER;
+                var fsize           = fconf.sizepx;
+                var $frame          = $( framediv );
                 var frame =
                 { 
                     ix              : topFrames.length,
@@ -119,56 +165,69 @@
                 frame.aratio = fconf.aratio; //dumb default value
                 frame.aratio = ( fsize && [ fsize[ 1 ] / fsize[ 0 ] ] ) || fconf.aratio;
 
-                btb.ifdeb( 'frame.aratio=' + frame.aratio + ' fconf.aratio= ' + fconf.aratio );
-                topFrames.push( frame );
-
-
                 //:cruerly restricts parent's CSS
                 $frame. css( 'position', 'relative' ).   css( 'overflow', 'hidden' ).
                         css( 'border', '0px;' ).         css( 'margin', '0px' ).
                         css( 'padding', '0px;' ).        css( 'width', '100%' );
+
+                topFrames.push( frame );
+                btb.ifdeb( 'frame.aratio=' + frame.aratio + ' fconf.aratio= ' + fconf.aratio );
+
+
+
 
 
                 ///////////////////////////////////////////////////////////////
                 //// Sets parallax scene items (subPFrames).
                 //// Parses image parameters from getAttribute ( 'data-conf' )
                 ///////////////////////////////////////////////////////////////
-                var $children = $( framediv ).children();
-                //c ccc( 'ch=', $children );
-                $children.each( function ( key, subPF ) {
+                $.each( childrenWithAttribute, function ( key, subPF ) {
 
-                    var $subPF = $( subPF ).css( 'border', '0px' ).css( 'margin', '0px' );
-
+                    var $subPF          = $( subPF ).css( 'border', '0px' ).css( 'margin', '0px' );
                     //. very dangerous thing: img may be not yet loaded
-                    //  frame.aratio   = frame.aratio; // TODM || img.naturalHeight / img.naturalWidth;
-                    var subPFrames = frame.subPFrames = frame.subPFrames || [];
+                    //  frame.aratio    = frame.aratio; // TODM || img.naturalHeight / img.naturalWidth;
+                    var subPFrames      = frame.subPFrames = frame.subPFrames   || [];
+                    var subPFconf       = getAttributes( subPF, confPref )      || {}           //parses native attributes
+                    subPFconf.distance  = subPFconf.distance                    || DEFAULT_DISTANCE_TO_BASE_LAYER;
+                    //. speed relative to base layer = parallax speed excess;
+                    var speed           = subPFconf.speed                       || DEFAULT_SPEED_EXCESS.slice();
+                    speed[1]            += ( 1 - fconf.perspective / subPFconf.distance );      //adds standard parallax excess of 
+                                                                                                //speed respect to base layer:
+    
 
-                    var helWrap = {};
-                    getAttributes( subPF, 'data-conf', function ( subPFconf ) {
+                    //  //\\ inserts youjoomla parameters if any,
+                    //       these parameters do override subPFconf parameters.
+                    //       this is a custom namespace for youjoomla.com; it is ignored if file yjoomla-adapter.js is not linked to HTML-page.
+                    if( app.yjoomla ) {
+                        var yjoomla = app.yjoomla;
+                        var param   = yjoomla.param;
+                        //// overrides setting supplied from custom framework for youjoomla.com
+                        yjoomla.getAttributes( subPF, getAttributes );
+                        speed[ 0 ] = param.velocityX;
+                        speed[ 1 ] = param.velocityY;
+                        subPFconf.phase0 = [ param.phaseX, param.phaseY ];
+                    }
+                    //  \\// inserts youjoomla parameters if any,
 
-                        if( !subPFconf ) return;
-                        //c ccc( 'item=', subPF, 'subPFconf=', subPFconf );
 
-                        subPFconf.distance = subPFconf.distance || 1;
-                        var speed = subPFconf.speed || [ 0, 0, 0 ];
-                        //.adds standard parallax increase in respect to parent layer:
-                        speed[ 1 ]  += 1 - fconf.perspective / subPFconf.distance;
 
-                        var boxpx   = subPFconf.boxpx;
-                        $.extend ( helWrap, { 
+                    /// spawns attributes and parameters
+                    var boxpx   = subPFconf.boxpx;
+                    var helWrap =
+                    { 
                             ix      : subPFrames.length,
                             $subPF  : $subPF,
                             conf    : subPFconf,
                             speed   : speed,
-                            phase0  : subPFconf.phase0 || 0,
+                            phase0  : subPFconf.phase0 || [ 0, 0 ],
                             scale   : boxpx && fsize && [ 1 / fsize [ 0 ], 1 / fsize [ 1 ] ],
                             video   : subPF.tagName.toLowerCase() === 'video'
-                        });
-                        subPFrames.push( helWrap );
-                        $subPF.css( 'position', 'absolute' ).css( 'top', '0px' );
-                        // too easy to be right: .css( 'width', '100%' );
-                        // changed in version 5.
-                    });
+                    };
+                    subPFrames.push( helWrap );
+                    $subPF.css( 'position', 'absolute' ).css( 'top', '0px' );
+                    // too easy to be right: .css( 'width', '100%' );
+                    // changed in version 5.
+
                     //btb.ifdeb( 'btb.browser.mobile=' + btb.browser.mobile + ' ' + subPF.tagName );
 
                     /// places mobile video-start-button on top
@@ -184,9 +243,10 @@
                         } );
                         //btb.ifd eb( 'mobile-video: z-index=' + $subPF.css( 'z-index' ) );
                     }
-                    
+                    var hh = frame.subPFrames[ 0 ];
                 });
     }
+
 
 
 
@@ -201,10 +261,10 @@
 
             var $frame      = frame.$frame;
             var width       = $frame.width();
-            var helWrap     = frame.subPFrames[ 0 ];
-            var $subPF      = helWrap.$subPF;
             var height      = frame.aratio * width;
 
+            //var helWrap     = frame.subPFrames[ 0 ];
+            //var $subPF      = helWrap.$subPF;
             //... ' img.clientHeight=' + img.clientHeight;
             //var height = parseInt( $( subPF ).css( 'height' ) );
 
@@ -291,11 +351,9 @@
 
             var helWrap     = frame.subPFrames[ 0 ];
             var $frame      = frame.$frame;
-
             //var box       = boxTest( subPF );
             //var top       = $frame.scrollTop(); //very wrong
             var top         = $frame.offset().top;
-
             var height      = helWrap.height; // $subPF.height();
 
 
@@ -341,18 +399,19 @@
     function doPositionChildElements( phase, frame )
     {
         $( frame.subPFrames ).each( function ( key, helWrap ) {
-            if( helWrap.distance === frame.perspective ) {
+
+            var speed = helWrap.speed;
+            var phase0  = helWrap.phase0;
+            //if( helWrap.distance === frame.perspective ) {
+            if( speed[0] === 0 && speed[1] === 0 && !phase0[0] && !phase0[1] ) {
                 //// sugar: skips repositioning of background elements
-                //// it has the same effect if to put subPF without data-conf attribute in the pxframe root ...
+                //// it can have the same effect if to put subPF without data-conf attribute in the pxframe root ...
                 return;
             }
             var width   = helWrap.width;
             var height  = helWrap.height;
-            var speed   = helWrap.speed;
-            var phase0  = helWrap.phase0;
-            var left    = helWrap.sleft + width  * ( phase - 1 + phase0 ) * speed[ 0 ];
-            var top     = helWrap.stop  + height * ( phase - 1 + phase0 ) * speed[ 1 ];
-
+            var left    = helWrap.sleft + width  * ( phase0[0] + phase * speed[ 0 ] );
+            var top     = helWrap.stop  + height * ( phase0[1] + phase * speed[ 1 ] );
             if( btb.hasTranslate3d ) {
                 var trans  = 'translate3d(' + left + 'px, ' + top + 'px, 0px )';
                 helWrap.$subPF.css( 'transform' , trans );

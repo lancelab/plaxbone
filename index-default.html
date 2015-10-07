@@ -17,9 +17,16 @@
     <body>
 
 
-        <div data-conf='{ "perspective": 100, "aratio":1.5 }' data-conf-app='{ "antichoking":"animFrame" }' >
-            <img data-conf='{ "distance": 100 }'  src="img/buildings.png">
-            <img data-conf='{ "distance": 80 }'   src="img/post.png">
+        <div class="parallax-frame" data-conf='{ "aratio":1.5 }'>
+            <img src="img/buildings.png">
+            <img data-conf='{ "distance": 0.8, "phase0":[0, 0.25] }'   src="img/post.png">
+            <div data-conf='{ "speed":[0, 1, 0] }' >
+                <div style="width:70%; padding:10%; padding-top:5%; font-size:18px; font-family:helvetica; color:#aaaaaa;">
+                    <h2>Images are in CSS-background</h2>
+                    Images can be set in CSS-background or included as full-rights<br>
+                    HTML-elements in parallax-frame HTML-element.
+                </div>
+            </div>
         </div>
 
         <div class="static">
@@ -32,19 +39,32 @@
                 <li>Configurable from HTML.</li>
                 <li>By default, aspect ratio is preserved.</li>
                 <li>No perspective depth implemented.</li>
-                <li>Browser-range: Android 2.3.5+, IE8+?.</li>
+                <li>Browser-range: Android 2.3.5+ ( no video ), IE8+?.</li>
                 <li>Images are spritable.</li>
             </ul>
         </div>
-        <div data-conf='{ "perspective": 100, "aratio":0.8, "sizepx":[ 1700, 1125 ] }'>
-            <img data-conf='{ "distance": 100                }'                                                             src="img/flours-DSCI0996.jpg">
-            <img data-conf='{ "distance": 80, "phase0": 0.8, "speed" : [ 1, 1  ],   "boxpx":[ 300, 200, 300, 300 ] }'       src="img/bubble80.png">
-            <!--           
-            <img data-conf='{ "distance": 50, "phase0": 1                            }'                                     src="img/bubblesDSCI0996.png">
-            -->
-            <img data-conf='{ "distance": 50, "phase0": 0.8, "speed" : [ 1.2, 0.3 ], "boxpx":[ 100, 700, 300, 300 ]  }'     src="img/bubble50.png">
-            <img data-conf='{ "distance": 30, "phase0": 1.0, "speed" : [ 1, 0.5 ],  "boxpx":[ 800, 300, 300, 300 ]  }'      src="img/bubble30.png">
-            <img data-conf='{ "distance": 20, "phase0": 0.4, "speed" : [ 1, 0.5 ],  "boxpx":[ 200, 600, 300, 300 ] }'       src="img/bubble20.png">
+        <div class="parallax-frame"  data-conf='{ "aratio":0.8, "sizepx":[ 1700, 1125 ] }'>
+
+            <div    style='background-image:url("img/flours-DSCI0996.jpg"); background-size:cover; '>
+            </div>
+            <div    style='background-image:url("img/bubblesDSCI0996.png"); background-size:cover; '
+                    data-conf='{ "phase0": [0.6, -0.8], "speed" : [ -1, 1.8  ] }' >
+            </div>
+            <img    src="img/bubble80.png"
+                    data-conf='{ "phase0": [0.6, 0.55], "speed" : [ 0, -1  ], "boxpx":[ 0, 0, 300, 300 ] }'    
+            >
+            <img    src="img/bubble50.png"
+                    data-conf='{ "phase0": [0.4, -0.3], "speed" : [ 0, 2  ], "boxpx":[ 0, 0, 300, 300 ] }'    
+            >
+
+            <div    style='background-image:url("img/bubble30.png"); background-size:cover; '
+                    data-conf='{ "phase0": [ -0.2, 0.2], "speed" : [ 1, 0  ], "boxpx":[ 0, 0, 300, 300 ] }'    
+            >
+            </div>
+            <img    src="img/bubble20.png"
+                    data-conf='{ "phase0": [ -0.5, 0.4], "speed" : [ 2, 0  ], "boxpx":[ 0, 0, 300, 300 ] }' 
+            >
+
         </div>
 
         <div class="static">
@@ -52,10 +72,8 @@
             <ul>
                 <li>This widget can be configured right from HTML in "data-conf" attribute.</li>
                 <li>perspective is a distance from parent-base layer to an observer,</li>
-                <li>phase0 is an effective phase when scroll-driven phase is 0</li>
-                <li>phase takes value 0 when frame becomes visible and takes value 1 when frame disappears or when there 
-                    is nothing to scroll</li>
-                <li>speed is an additional speed applied to the image</li>
+                <li>phase0 is an effective phase, phase0 is an array [top, left] shifts when pframe becomes visible </li>
+                <li>speed is a speed relative to parent p-frame speed</li>
                 <li>boxpx is a starting point at phase = 0</li>
                 <li>src is a Web-path to an image</li>
             </ul>            

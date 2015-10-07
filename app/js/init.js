@@ -6,6 +6,11 @@
 //
 //          This file is a main entry point into application.
 //
+//      version 14. Sept 29 - Oct 3, 2015.
+//                  Improved animationFrame throttler: vendor/btb/throttled-animation-frame.js
+//                  Added youjoomla HTML-attributes parser and fallback to them:
+//                      for speed, directions, phase,
+//                      css-background media is available.
 //      version 13. Sept 26, 2015.
 //                  Posted to github. Minor cleanup.
 //      version 10. Sept 25, 2015. 

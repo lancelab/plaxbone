@@ -1,21 +1,42 @@
-//	//\\//	    Throttles ( double delayes callback ) via timeout and further by default via animationFrame.
-//              First it delays a callback, and if AF mode is chosen, puts it into AF.
-//              Furthemore, if next event is fired before AF began, then
-//              AF is cleared, callback not executed, and callback is delayed again.
+//  //\\//  AnimatinoFrame polyfill and throttler.
+//          Purpose is to
+//              polyfill requestAnimationFrame,
+//              handle "call-flooding or choking conditions", and
+//              to supply `event` parameter to the leaf callback.
+
 
 ( function () {
 
 	var btb				= window.btb$				= window.btb$				|| {};		
 
-    var DEFAULT_DELAY = 1000 / 60;   //mimics expected FPS.
-    var DEFAULT_DELAY = 1;
+    var AF_FALLBACK_DELAY   = 1000 / 60;   //mimics expected FPS.
+    var DEFAULT_DELAY       = 1;
+    var DEFAULT_MODE        = 'animFrame';
 
 
-    ///firstly do polyfil missed requestAnimationFrame and cancel...
+
+    ///Part I of II: does polyfil missed requestAnimationFrame and cancel...
     ( function () {
+
+
+        /// requestAnimationFrame fallback
+        var fallbackRequest = function ( callback ) {
+            fallbackID = setTimeout( fallBack, AF_FALLBACK_DELAY );
+            return fallbackID;
+        };
+
+        /// cancelAnimationFrame fallback
+        var fallbackCancel = function ( callback ) {
+            if( fallbackID !== null ) {
+				window.clearTimeout( fallbackID );
+            }
+        };
+
+
+
         //=============================================================================================================
         // this may have more thought: https://github.com/julienetie/request-frame/blob/master/src/request-frame.src.js
-        // seems not the most elaborate polyfil, but enough satisfactory:
+        // seems not the most elaborate polyfil, but enough good:
         // credits: downloaded from: https://gist.github.com/paulirish/1579671
         //          http://paulirish.com/2011/requestanimationframe-for-smart-animating/
         //          http://my.opera.com/emoller/blog/2011/12/20/requestanimationframe-for-smart-er-animating
@@ -33,70 +54,105 @@
             win[ raf ]   = win[ pr + Raf ];
             win[ caf ]   = win[ pr + Caf ] || win[ pr + 'Cancel' + Raf ];
         }
+
+        if( !win[ raf ] ) {
+            //// still no requestAnimationFrame exists ... create a fallback
+            win[ raf ] = fallbackRequest;
+            win[ caf ] = fallbackCancel;
+        }
+
     }) ();
 
 
 
-
-
-    /// Throttles ( double delayes callback ) via timeout and further by default via animationFrame.
-	btb.throttledAnimFrame = function ( callback_at_the_end, delay, delay_mode )
+    /// Part II of II:
+    //  Throttler.
+    //  Purpose is to handle "call-flooding or choking conditions" and to supply `event` parameter to the callback.
+    //  Takes care about cancelling scheduled animationFrame when new animationFrame is requested.
+    //  When param delayMode is 
+    //     "none"                   returns finalCb; no functionality is added;
+    //     "animFrame"              autocancels already scheduled animationFrame and schedules new animationFrame;
+    //     "timedelay"              or !window.AnimationFrame: makes an ordinary setTimeout;
+    //     "timedelayAndAnimFrame"  double throttles via setTimeout and animationFrame
+    /**
+      * @param finalCb   application callback, signature: function( event ), event is an optional parameter.
+      */
+	btb.throttledAnimFrame = function ( finalCb, delay, delayMode )
 	{
-    	//btb.d eb( 'setting up btb.throttledAnimFrame ... delay_mode=' + delay_mode +' delay=' + delay );
+    	//  btb.d eb( 'setting up btb.throttledAnimFrame ... delayMode=' + delayMode +' delay=' + delay );
         //. requestAnimationFrame mode is a hard-coded default
-        delay_mode = delay_mode || 'animFrame';
-        if( delay_mode === 'none' ) return callback_at_the_end;
+        delayMode   = delayMode || 'animFrame';
+        var afrID   = null;
+		var toutID  = null;
+  		var event	= null;
+		delay       = delay || DEFAULT_DELAY;
 
-		var toutID		= null;
-        var afrID       = null;
-		var event		= null;
-		delay           = delay || DEFAULT_DELAY;
 
-		var delayed_cb = function ()
-		{
-			//btb.d eb( 'executing delayed_cb ... delay_mode = ' + delay_mode + ' toutID=' + toutID );
-			toutID = null;
-            if( delay_mode === 'timedelay' ) {
-    			callback_at_the_end( event );
-            } else if ( delay_mode === 'animFrame' ) {
-    			var afrID = requestAnimationFrame( function () {
-           			//btb.d eb( 'executing requestAnimationFrame ... afrID=' + afrID );
+        if( delayMode === 'none' ) {
+
+            var outerCb = finalCb;
+
+        } else if ( delayMode === 'animFrame' && window.requestAnimationFrame ) {
+
+    		var outerCb = function ( event_ )
+    		{
+                if ( afrID ) {
+                    cancelAnimationFrame( afrID );
                     afrID = null;
-                    callback_at_the_end( event );
+                }
+       			var afrID = requestAnimationFrame( function () {
+           			//btb.d eb( 'executing pure requestAnimationFrame ... afrID=' + afrID );
+                    afrID = null;
+                    finalCb( event_ );
                 } );
-            }
-		};
+    		};
 
+        } else {           
 
+            //// Delayed callback  /////////
+    		var delayedCb = function ()
+    		{
+    			//btb.d eb( 'executing delayedCb ... delayMode = ' + delayMode + ' toutID=' + toutID );
+    			toutID = null;
+                if( delayMode === 'timedelay' || !window.AnimationFrame ) {
+        			finalCb( event );
+                } else if ( delayMode === 'timedelayAndAnimFrame' ) {
+        			var afrID = requestAnimationFrame( function () {
+               			//btb.d eb( 'executing delayed requestAnimationFrame ... afrID=' + afrID );
+                        afrID = null;
+                        finalCb( event );
+                    } );
+                }
+    		};
 
-        var throttledEventHandler = function ( event_ ) {
+            /// Delays callbacks
+            var outerCb = function ( event_ )
+            {
+    			//:	good de bugs:
+    			//  btb.d eb( ' callbacked. toutID=' + toutID + 'event_=', event_ );
+    			//  btb.d eb( 'external callback fired on event.type=' + event_.type + ' toutID=' + toutID );
+    
+    			event = event_;
 
-			//.	good but too wordy de bug:
-			//  btb.d eb( ' callbacked. toutID=' + toutID + 'event_=', event_ );
+                /// Clears scheduled callbacks
+    			if( toutID !== null )
+    			{
+    				window.clearTimeout( toutID );
+    			} else if ( afrID ) {
+    				//btb.d eb( 'cancelling aftID= ' + afrID );
+                    //// moreover if toutID is already cleared, but AF is already and yet scheduled, do amend AF:
+                    cancelAnimationFrame( afrID );
+                    afrID = null;
+                }
 
-			//.	good de bug:
-			//  btb.d eb( 'external callback fired on event.type=' + event_.type + ' toutID=' + toutID );
+           		toutID = setTimeout( delayedCb, delay );
+        		//btb.d eb( 'did set timeout ... ' + ' toutID=' + toutID );
+    		};
+        }
 
-			event = event_;
-
-			if( toutID !== null )
-			{
-				window.clearTimeout( toutID );
-			} else if ( afrID ) {
-				//btb.d eb( 'cancelling aftID= ' + afrID );
-                //// moreover if toutID is already cleared, but AF is already and yet scheduled, do amend AF:
-                cancelAnimationFrame( afrID );
-                afrID = null;
-            }
-       		toutID = setTimeout( delayed_cb, delay );
-    		//btb.d eb( 'did set timeout ... ' + ' toutID=' + toutID );
-		};
-
-        return throttledEventHandler;
+        return outerCb;
 
 	};
 
 }) ();
-
-
 

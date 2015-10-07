@@ -1,14 +1,36 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Simple Parallax App</title>
+        <title>PlaxBone - Minimalist Parallax Plugin</title>
     	<meta charset="utf-8">
-        <meta name="viewport"                   content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-    	<!-- meta name="viewport"		        content="width=device-width" -->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     </head>
-    <body onload="location='readme.html'">
+    <body>
 
-         <a href="readme.html">Readme and Demos</a>
+        <div>
+            <pre>
+
+               <a href="index-default.html">Default</a>
+
+               <a href="index-video.html">With video</a> Note, Android 2.3.5 possibly needs a fallback to own mp4 video format.
+
+               <a href="readme.html">Readme</a>
+
+               <a href="app/js/init.js">See added features and design approach</a>
+
+               <a href="testbench/compare.png">See frame timings from Google timelines</a>
+
+               Best for Android 2.3.5: timedelay = 10 ms and no AnimationFrame.
+
+                   <a href="index-timedelay-throttle.html">timedelay throttle; but in desktop it feels jerky ( Ubuntu 14.04, FireFox )</a>.
+
+                   You can see JavaScript debug messages right over mobile screens.
+                   <a href="index-timedelay-throttle.html?deb--ffff0000">timedelay throttle, debug</a>.
+
+               <a href="index-no-throttling.html">no throttle, no animationFrame request</a>. Not good for Andr ...
+
+            </pre>
+        </div>
 
     </body>
 </html>

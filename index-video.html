@@ -16,15 +16,13 @@
     </head>
     <body>
 
-        <div data-conf='{ "perspective": 100, "originsize":[1480,800], "sizepx":[1480,800] }'
-             data-conf-app='{ "antichoking":"timedelay", "antichoking-delay":10 }'
-        >
-            <video data-conf='{ "distance": 100, "boxpx":[ 0, 0, 1480,800 ] }'  autoplay loop >
+        <div data-conf='{ "sizepx":[1480,800] }'>
+            <video data-conf='{ "boxpx":[ 0, 0, 1480,800 ] }'  autoplay loop >
                 <source src="img/tree-converted-to-android.mp4">
                 <source src="img/tree.mp4"> <!-- this thing fails on Android 2.3.5 -->
             </video>    
 
-            <div data-conf='{ "distance": 80, "phase0": 0.4, "speed" : [ -0.0, -1.5  ], "boxpx":[ 200, 0, 1180,800 ] }' class="annotation">
+            <div data-conf='{ "phase0": [ 0, 0.9 ], "speed" : [ 0, -1.5  ], "boxpx":[ 200, 0, 1180,800 ] }' class="annotation">
                 <h2>PlaxBone</h2>
                 Minimalist parallax plugin.<br><br>
                 Concept:<br>
@@ -53,25 +51,41 @@
             </ul>            
         </div>
 
-        <div data-conf='{ "perspective": 100, "aratio":0.8, "sizepx":[ 1700, 1125 ] }'>
-            <img data-conf='{ "distance": 100                }'                                                             src="img/flours-DSCI0996.jpg">
-            <img data-conf='{ "distance": 80, "phase0": 0.8, "speed" : [ 1, 1  ],   "boxpx":[ 300, 200, 300, 300 ] }'     src="img/bubble80.png">
-            <!--           
-            <img data-conf='{ "distance": 50, "phase0": 1                            }'                                     src="img/bubblesDSCI0996.png">
-            -->
-            <img data-conf='{ "distance": 50, "phase0": 0.8, "speed" : [ 1.2, 0.3 ], "boxpx":[ 100, 700, 300, 300 ]  }'      src="img/bubble50.png">
-            <img data-conf='{ "distance": 30, "phase0": 1.0, "speed" : [ 1, 0.5 ],  "boxpx":[ 800, 300, 300, 300 ]  }'      src="img/bubble30.png">
-            <img data-conf='{ "distance": 20, "phase0": 0.4, "speed" : [ 1, 0.5 ],  "boxpx":[ 200, 600, 300, 300 ] }'      src="img/bubble20.png">
+        <div class="parallax-frame"  data-conf='{ "aratio":0.8, "sizepx":[ 1700, 1125 ] }'>
+
+            <div    style='background-image:url("img/flours-DSCI0996.jpg"); background-size:cover; '>
+            </div>
+            <div    style='background-image:url("img/bubblesDSCI0996.png"); background-size:cover; '
+                    data-conf='{ "phase0": [0.6, -0.8], "speed" : [ -1, 1.8  ] }' >
+            </div>
+            <img    src="img/bubble80.png"
+                    data-conf='{ "phase0": [0.6, 0.55], "speed" : [ 0, -1  ], "boxpx":[ 0, 0, 300, 300 ] }'    
+            >
+            <img    src="img/bubble50.png"
+                    data-conf='{ "phase0": [0.4, -0.3], "speed" : [ 0, 2  ], "boxpx":[ 0, 0, 300, 300 ] }'    
+            >
+
+            <div    style='background-image:url("img/bubble30.png"); background-size:cover; '
+                    data-conf='{ "phase0": [ -0.2, 0.2], "speed" : [ 1, 0  ], "boxpx":[ 0, 0, 300, 300 ] }'    
+            >
+            </div>
+            <img    src="img/bubble20.png"
+                    data-conf='{ "phase0": [ -0.5, 0.4], "speed" : [ 2, 0  ], "boxpx":[ 0, 0, 300, 300 ] }' 
+            >
+
         </div>
 
-
-        <div class="static short">
-            <h2>TODO</h2>
+        <div class="static">
+            <h2>Configuration</h2>
             <ul>
-                Give more configuration sugar:
-                <li>image and video load events to catch aspect ratio</li>
-                <li>do pause non-seen videos</li>
+                <li>This widget can be configured right from HTML in "data-conf" attribute.</li>
+                <li>perspective is a distance from parent-base layer to an observer,</li>
+                <li>phase0 is an effective phase, phase0 is an array [top, left] shifts when pframe becomes visible </li>
+                <li>speed is a speed relative to parent p-frame speed</li>
+                <li>boxpx is a starting point at phase = 0</li>
+                <li>src is a Web-path to an image</li>
             </ul>            
+
         </div>
 
     </body>
